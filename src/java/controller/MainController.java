@@ -19,10 +19,9 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "MainController", urlPatterns = {"/MainController"})
 public class MainController extends HttpServlet {
-        private static final String LOGIN_PAGE = "Login.jsp";
+    private static final String LOGIN_PAGE = "Login.jsp";
     private static final String USER_CONTROLLER = "UserController";
-    private static final String LOGOUT = "Logout";
-    private static final String LOGOUT_CONTROLLER = "LogoutController";
+    private static final String PROJECT_CONTROLLER = "ProjectController";
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -43,12 +42,16 @@ public class MainController extends HttpServlet {
                 url = LOGIN_PAGE;
             } else if (action.equals("login")) {
                 url = USER_CONTROLLER;
-            } else if (action.equals("Logout")) {
-                url = "/UserController";
-            } else if (action.equals("Create")) {
-                url = "ProjectServlet";
-            } else if (action.equals("Search")) {
-                url = "SearchServlet";
+            } else if (action.equals("logout")) {
+                url = USER_CONTROLLER;
+            } else if (action.equals("create")) {
+                url = PROJECT_CONTROLLER;
+            } else if (action.equals("search")) {
+                url = PROJECT_CONTROLLER;
+            }else if (action.equals("updateGetPage")) {
+                url = PROJECT_CONTROLLER;
+            }else if (action.equals("update")) {
+                url = PROJECT_CONTROLLER;
             }
         } finally {
             request.getRequestDispatcher(url).forward(request, response);

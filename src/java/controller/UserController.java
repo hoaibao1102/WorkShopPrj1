@@ -4,6 +4,7 @@
  */
 package controller;
 
+import dao.StartupProjectDAO;
 import dao.UserDAO;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
@@ -14,7 +15,11 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.List;
+import model.StartupProject;
 import model.User;
+import org.apache.tomcat.jni.SSLContext;
+import static util.PasswordUtils.hashPassword;
 
 /**
  *
@@ -39,22 +44,31 @@ public class UserController extends HttpServlet {
         String url = LOGIN_PAGE;
         String action = request.getParameter("action");
         UserDAO udao = new UserDAO();
-
+        HttpSession session = request.getSession();
+        
         try {
             if ("login".equals(action)) {
                 String userName = request.getParameter("userName");
                 String password = request.getParameter("password");
-                User user = udao.checkLogin(userName, password);
+                String password2 = hashPassword(password);
+                User user = udao.checkLogin(userName, password2);
                 
                 if (user != null) {
-                    HttpSession session = request.getSession();
+                    
+                    StartupProjectDAO pdao = new StartupProjectDAO();
+                    List<StartupProject> projs = pdao.readAll();
+                    
                     session.setAttribute("user", user);
+                    request.setAttribute("projects", projs);
                     url = "Dashboard.jsp";
                 } else {
-                    System.out.println("null r?i");
+                    
                     request.setAttribute("errorNoti", "Invalid login");
                     url = LOGIN_PAGE;
                 }
+            }else if ("logout".equals(action)) {
+                url =LOGIN_PAGE;
+                session.invalidate();
             }
         } catch (Exception e) {     
         } finally {
